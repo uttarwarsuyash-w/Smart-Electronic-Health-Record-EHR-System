@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Start Consultation</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Start new consultation" %}
+  {% include "_header.html" %}
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <a class="tab" href="{{ url_for('doctor_home') }}">Doctor Login</a>
+      <a class="tab active" href="{{ url_for('start_consultation') }}">Start Consultation</a>
+    </div>
+
+    {% if error %}
+      <div class="error-box">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+
+    <section>
+      <div class="section-head">
+        <h2>Enter Patient ID</h2>
+      </div>
+
+      <form action="{{ url_for('find_patient') }}" method="post">
+        <label>Patient Custom ID
+          <input type="text" name="patient_custom_id" required>
+        </label>
+
+        <button class="submit" type="submit">Search Patient</button>
+      </form>
+    </section>
+
+    {% if patient %}
+      <section class="patient-details">
+        <div class="section-head">
+          <h2>Patient Details</h2>
+        </div>
+
+        <div class="details-grid">
+          <p><b>Patient ID:</b> {{ patient["Patient_Custom_ID"] }}</p>
+          <p><b>Name:</b> {{ patient["Name"] }}</p>
+          <p><b>Father/Husband's Name:</b> {{ patient["Father_Husband_Name"] }}</p>
+          <p><b>Gender:</b> {{ patient["Gender"] }}</p>
+          <p><b>Age:</b> {{ patient["Age"] }}</p>
+          <p><b>Date of Birth:</b> {{ patient["DOB"] }}</p>
+          <p><b>Blood Group:</b> {{ patient["Blood_Group"] }}</p>
+          <p><b>Height:</b> {{ patient["Height"] }} cm</p>
+          <p><b>Weight:</b> {{ patient["Weight"] }} kg</p>
+          <p><b>Address:</b> {{ patient["Address"] }}</p>
+          <p><b>City:</b> {{ patient["City"] }}</p>
+          <p><b>State:</b> {{ patient["State"] }}</p>
+          <p><b>Mobile Number:</b> {{ patient["Mobile_no"] }}</p>
+          <p><b>Email:</b> {{ patient["Email"] }}</p>
+        </div>
+
+        <div class="action-row">
+          <form action="{{ url_for('consultation_form') }}" method="post">
+            <input type="hidden" name="patient_custom_id" value="{{ patient['Patient_Custom_ID'] }}">
+            <button class="submit" type="submit">Start Consultation</button>
+          </form>
+
+          <form action="{{ url_for('patient_history') }}" method="post">
+            <input type="hidden" name="patient_custom_id" value="{{ patient['Patient_Custom_ID'] }}">
+            <button class="submit secondary" type="submit">View History</button>
+          </form>
+        </div>
+      </section>
+    {% endif %}
+  </main>
+</body>
+</html>

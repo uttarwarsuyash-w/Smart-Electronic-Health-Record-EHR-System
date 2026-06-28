@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Doctor dashboard" %}
+  {% include "_header.html" %}
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <a class="tab active" href="{{ url_for('doctor_home') }}">Doctor</a>
+    </div>
+
+    <div class="result">
+      <p>Login successful.</p>
+      <h2>Doctor ID: {{ doctor_id }}</h2>
+    </div>
+
+    <section class="home-box">
+      <div class="section-head">
+        <h2>Choose Option</h2>
+      </div>
+
+      <div class="home-options">
+        <a class="option-card" href="{{ url_for('start_consultation') }}">
+          <h3>Start New Consultation</h3>
+          <p>Enter patient ID and view patient details.</p>
+        </a>
+
+        <a class="option-card" href="{{ url_for('past_consultation') }}">
+          <h3>View Past Consultation</h3>
+          <p>View previous consultation records.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

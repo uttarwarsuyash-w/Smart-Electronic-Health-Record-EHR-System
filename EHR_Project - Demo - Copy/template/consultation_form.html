@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consultation Form</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Consultation form" %}
+  {% include "_header.html" %}
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <a class="tab" href="{{ url_for('start_consultation') }}">Search Patient</a>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <h2>Patient and Doctor Details</h2>
+      </div>
+
+      <div class="details-grid">
+        <p><b>Patient Name:</b> {{ patient["Name"] }}</p>
+        <p><b>Patient Age:</b> {{ patient["Age"] }}</p>
+        <p><b>Patient Gender:</b> {{ patient["Gender"] }}</p>
+        <p><b>Doctor Name:</b> {{ doctor["Name"] }}</p>
+        <p><b>Specialization:</b> {{ doctor["Specialization"] }}</p>
+        <p><b>Hospital:</b> {{ doctor["Hospital_name"] }}</p>
+      </div>
+    </section>
+
+    <section class="patient-details">
+      <div class="section-head">
+        <h2>Enter Consultation Details</h2>
+      </div>
+
+      <form action="{{ url_for('save_consultation') }}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="patient_custom_id" value="{{ patient['Patient_Custom_ID'] }}">
+        <input type="hidden" name="doctor_custom_id" value="{{ doctor['Doctor_Custom_ID'] }}">
+
+        <div class="two">
+          <label>Date
+            <input type="date" name="consultation_date" required>
+          </label>
+
+          <label>Time
+            <input type="time" name="consultation_time" required>
+          </label>
+        </div>
+
+        
+
+        <label>Complaints of the Patient
+          <textarea name="complaints" required></textarea>
+        </label>
+
+        <label>Symptoms
+          <textarea name="symptoms" required></textarea>
+        </label>
+
+        <label>Consultation Notes
+          <textarea name="consultation_notes" required></textarea>
+        </label>
+
+        <label>Conclusion
+          <textarea name="conclusion" required></textarea>
+        </label>
+
+        <label>Prescription
+          <textarea name="prescription" required></textarea>
+        </label>
+
+        <label>Upload Lab Report
+          <input type="file" name="lab_report" accept="application/pdf,.pdf">
+        </label>
+
+        <button class="submit" type="submit">Submit Consultation</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

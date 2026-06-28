@@ -1,0 +1,15 @@
+<header>
+  <div class="site-header-content">
+    <div>
+      <h1>Smart Health Record System</h1>
+      <p>{{ header_subtitle }}</p>
+    </div>
+
+    {% if current_doctor %}
+      <div class="doctor-session">
+        <span>{{ current_doctor.name }}</span>
+        <strong>{{ current_doctor.id }}</strong>
+      </div>
+    {% endif %}
+  </div>
+</header>

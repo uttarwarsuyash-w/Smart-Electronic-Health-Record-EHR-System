@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Health Record System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Welcome to the electronic health record registration portal" %}
+  <!-- {% include "_header.html" %} -->
+  <header>
+  <div class="site-header-content">
+    <div>
+      <h1>Smart Health Record System</h1>
+      <p>{{ header_subtitle }}</p>
+    </div>
+  </div>
+  </header>
+  <main>
+    <section class="home-box">
+      <div class="section-head">
+        <h2>Enter System</h2>
+      </div>
+
+      <div class="home-options">
+        <a class="option-card" href="{{ url_for('patient_form') }}">
+          <h3>Enter as a Patient</h3>
+          <p>Register patient details and generate patient ID.</p>
+        </a>
+
+        <a class="option-card" href="{{ url_for('doctor_home') }}">
+          <h3>Enter as a Doctor</h3>
+          <p>Login with doctor ID or create a new doctor registration.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

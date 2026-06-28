@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Health Record System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Patient and doctor registration system" %}
+  {% set header_subtitle = "Welcome to the electronic health record registration portal" %}
+  <!-- {% include "_header.html" %} -->
+  <header>
+  <div class="site-header-content">
+    <div>
+      <h1>Smart Health Record System</h1>
+      <p>{{ header_subtitle }}</p>
+    </div>
+  </div>
+  </header>
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <!-- <a class="tab {% if page == 'patient' %}active{% endif %}" href="{{ url_for('patient_form') }}">Patient Registration</a> -->
+    </div>
+
+    {% if message %}
+      <div class="result">
+        <p>{{ message }}</p>
+        <h2>Generated ID: {{ generated_id }}</h2>
+      </div>
+    {% endif %}
+
+    {% if page == 'patient' %}
+      <section>
+        <div class="section-head">
+          <h2>Add Patient</h2>
+        </div>
+
+        <form action="{{ url_for('add_patient') }}" method="post">
+          <label>Full Name
+            <input type="text" name="name" required>
+          </label>
+
+          <label>Father/Husband's Name
+            <input type="text" name="father_husband_name" required>
+          </label>
+
+          <div class="two">
+            <label>Gender
+              <select name="gender" required>
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </label>
+
+            <label>Age
+              <input type="number" name="age" min="0" required>
+            </label>
+          </div>
+
+          <div class="two">
+            <label>Date of Birth
+              <input type="date" name="dob" required>
+            </label>
+
+            <label>Blood Group
+              <input type="text" name="blood_group" required>
+            </label>
+          </div>
+
+          <div class="two">
+            <label>Height (cm)
+              <input type="number" name="height" step="0.1">
+            </label>
+
+            <label>Weight (kg)
+              <input type="number" name="weight" step="0.1">
+            </label>
+          </div>
+
+          <label>Address
+            <input type="text" name="address" required>
+          </label>
+
+          <div class="two">
+            <label>City
+              <input type="text" name="city" required>
+            </label>
+
+            <label>State
+              <input type="text" name="state" required>
+            </label>
+          </div>
+
+          <label>Mobile Number
+            <input type="text" name="mobile" required>
+          </label>
+
+          <label>Email
+            <input type="email" name="email">
+          </label>
+
+          <button class="submit" type="submit">Register Patient</button>
+        </form>
+      </section>
+    {% endif %}
+
+    {% if page == 'doctor' %}
+      <section>
+        <div class="section-head">
+          <h2>Add Doctor</h2>
+        </div>
+
+        <form action="{{ url_for('add_doctor') }}" method="post">
+          <label>Full Name
+            <input type="text" name="name" required>
+          </label>
+
+          <label>Specialization
+            <input type="text" name="specialization" required>
+          </label>
+
+          <label>Hospital Name
+            <input type="text" name="hospital_name" required>
+          </label>
+
+          <div class="two">
+            <label>City
+              <input type="text" name="city" required>
+            </label>
+
+            <label>State
+              <input type="text" name="state" required>
+            </label>
+          </div>
+
+          <label>NMR ID
+            <input type="text" name="nmr_id" required>
+          </label>
+
+          <label>Mobile Number
+            <input type="text" name="mobile" required>
+          </label>
+
+          <label>Email
+            <input type="email" name="email">
+          </label>
+
+          <button class="submit" type="submit">Register Doctor</button>
+        </form>
+      </section>
+    {% endif %}
+  </main>
+</body>
+</html>

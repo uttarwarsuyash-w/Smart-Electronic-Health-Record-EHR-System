@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient History</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Patient consultation history" %}
+  {% include "_header.html" %}
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <a class="tab" href="{{ url_for('start_consultation') }}">Start Consultation</a>
+    </div>
+
+    {% if patient %}
+      <section>
+        <div class="section-head">
+          <h2>Patient Details</h2>
+        </div>
+
+        <div class="details-grid">
+          <p><b>Patient ID:</b> {{ patient["Patient_Custom_ID"] }}</p>
+          <p><b>Name:</b> {{ patient["Name"] }}</p>
+          <p><b>Age:</b> {{ patient["Age"] }}</p>
+          <p><b>Gender:</b> {{ patient["Gender"] }}</p>
+        </div>
+      </section>
+    {% endif %}
+
+    <section class="patient-details">
+      <div class="section-head">
+        <h2>Consultation History</h2>
+      </div>
+
+      {% if consultations %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Patient ID</th>
+                <th>Doctor ID</th>
+                <th>Date</th>
+                <th>View</th>
+                <th>Report</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for consultation in consultations %}
+                <tr>
+                  <td>{{ consultation["Consultation_ID"] }}</td>
+                  <td>{{ consultation["Patient_Custom_ID"] }}</td>
+                  <td>{{ consultation["Doctor_Custom_ID"] }}</td>
+                  <td>{{ consultation["Consultation_Date"] }}</td>
+                  <td>
+                    <a class="small-link" href="{{ url_for('view_consultation', consultation_id=consultation['Consultation_ID']) }}">View</a>
+                  </td>
+                  <td>
+                    {% if consultation["Lab_Report"] %}
+                      {% set report_url = url_for('static', filename='lab_reports/' + consultation['Lab_Report']) %}
+                      <button
+                        class="small-link report-button"
+                        type="button"
+                        data-report-url="{{ report_url }}"
+                        data-report-name="{{ consultation['Lab_Report'] }}"
+                      >
+                        View Report
+                      </button>
+                    {% else %}
+                      <span class="muted-text">No report</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="register-content">
+          <p>No consultation history found for this patient.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    {% if patient %}
+      <section class="patient-details ai-card" data-patient-id="{{ patient['Patient_Custom_ID'] }}">
+        <div class="section-head ai-head">
+          <h2>AI Patient Summary</h2>
+          <button class="refresh-button" type="button" id="refreshSummary">Refresh Summary</button>
+        </div>
+
+        <div class="ai-summary-body">
+          <div class="spinner" id="summarySpinner"></div>
+          <p id="summaryText">Generating patient summary...</p>
+        </div>
+      </section>
+    {% endif %}
+  </main>
+
+  <div class="modal-backdrop" id="reportModal" aria-hidden="true">
+    <div class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="report-modal-head">
+        <h2 id="reportTitle">Lab Report</h2>
+        <button class="modal-close" type="button" aria-label="Close report">&times;</button>
+      </div>
+      <iframe id="reportFrame" title="Lab report PDF"></iframe>
+      <div class="report-modal-actions">
+        <a class="button-link" id="downloadReport" href="#" download>Download Report</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const aiCard = document.querySelector(".ai-card");
+    const summaryText = document.getElementById("summaryText");
+    const summarySpinner = document.getElementById("summarySpinner");
+    const refreshButton = document.getElementById("refreshSummary");
+    const reportModal = document.getElementById("reportModal");
+    const reportFrame = document.getElementById("reportFrame");
+    const downloadReport = document.getElementById("downloadReport");
+    const closeReport = document.querySelector(".modal-close");
+
+    function hideReport() {
+      reportModal.classList.remove("is-open");
+      reportModal.setAttribute("aria-hidden", "true");
+      reportFrame.src = "";
+    }
+
+    document.querySelectorAll(".report-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const reportUrl = button.dataset.reportUrl;
+        reportFrame.src = reportUrl;
+        downloadReport.href = reportUrl;
+        downloadReport.setAttribute("download", button.dataset.reportName || "lab-report.pdf");
+        reportModal.classList.add("is-open");
+        reportModal.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    closeReport.addEventListener("click", hideReport);
+    reportModal.addEventListener("click", (event) => {
+      if (event.target === reportModal) {
+        hideReport();
+      }
+    });
+
+    async function loadPatientSummary() {
+      if (!aiCard) {
+        return;
+      }
+
+      const patientId = aiCard.dataset.patientId;
+      summarySpinner.style.display = "inline-block";
+      summaryText.textContent = "Generating patient summary...";
+      refreshButton.disabled = true;
+
+      try {
+        const response = await fetch(`/ai_patient_summary/${patientId}`);
+        if (!response.ok) {
+          summaryText.textContent = "Unable to generate AI summary. Please login again and try.";
+          summarySpinner.style.display = "none";
+          refreshButton.disabled = false;
+          return;
+        }
+
+        const result = await response.json();
+        summaryText.textContent = result.summary || "Summary not available.";
+      } catch (error) {
+        summaryText.textContent = "Unable to load AI summary. Please try again.";
+      }
+
+      summarySpinner.style.display = "none";
+      refreshButton.disabled = false;
+    }
+
+    if (refreshButton) {
+      refreshButton.addEventListener("click", loadPatientSummary);
+    }
+
+    loadPatientSummary();
+  </script>
+</body>
+</html>

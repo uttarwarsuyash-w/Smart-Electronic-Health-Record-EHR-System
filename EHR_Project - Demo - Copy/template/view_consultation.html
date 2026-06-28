@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consultation Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Consultation details" %}
+  {% include "_header.html" %}
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+      <a class="tab" href="{{ url_for('past_consultation') }}">Past Consultation</a>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <h2>Consultation Information</h2>
+      </div>
+
+      <div class="details-grid">
+        <p><b>Consultation ID:</b> {{ consultation["Consultation_ID"] }}</p>
+        <p><b>Date:</b> {{ consultation["Consultation_Date"] }}</p>
+        <p><b>Day:</b> {{ consultation["Consultation_Day"] }}</p>
+        <p><b>Time:</b> {{ consultation["Consultation_Time"] }}</p>
+        <p><b>Patient ID:</b> {{ consultation["Patient_Custom_ID"] }}</p>
+        <p><b>Doctor ID:</b> {{ consultation["Doctor_Custom_ID"] }}</p>
+      </div>
+    </section>
+
+    {% if patient %}
+      <section class="patient-details">
+        <div class="section-head">
+          <h2>Patient Details</h2>
+        </div>
+
+        <div class="details-grid">
+          <p><b>Name:</b> {{ patient["Name"] }}</p>
+          <p><b>Father/Husband's Name:</b> {{ patient["Father_Husband_Name"] }}</p>
+          <p><b>Gender:</b> {{ patient["Gender"] }}</p>
+          <p><b>Age:</b> {{ patient["Age"] }}</p>
+          <p><b>Date of Birth:</b> {{ patient["DOB"] }}</p>
+          <p><b>Blood Group:</b> {{ patient["Blood_Group"] }}</p>
+          <p><b>Height:</b> {{ patient["Height"] }} cm</p>
+          <p><b>Weight:</b> {{ patient["Weight"] }} kg</p>
+          <p><b>Address:</b> {{ patient["Address"] }}</p>
+          <p><b>City:</b> {{ patient["City"] }}</p>
+          <p><b>State:</b> {{ patient["State"] }}</p>
+          <p><b>Mobile Number:</b> {{ patient["Mobile_no"] }}</p>
+          <p><b>Email:</b> {{ patient["Email"] }}</p>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if doctor %}
+      <section class="patient-details">
+        <div class="section-head">
+          <h2>Doctor Details</h2>
+        </div>
+
+        <div class="details-grid">
+          <p><b>Name:</b> {{ doctor["Name"] }}</p>
+          <p><b>Specialization:</b> {{ doctor["Specialization"] }}</p>
+          <p><b>Hospital:</b> {{ doctor["Hospital_name"] }}</p>
+          <p><b>Mobile:</b> {{ doctor["Mobile"] }}</p>
+        </div>
+      </section>
+    {% endif %}
+
+    <section class="patient-details">
+      <div class="section-head">
+        <h2>Doctor Notes</h2>
+      </div>
+
+      <div class="details-grid">
+        <p class="note-text"><b>Complaints:</b><span>{{ consultation["Complaints"] }}</span></p>
+        <p class="note-text"><b>Symptoms:</b><span>{{ consultation["Symptoms"] }}</span></p>
+        <p class="note-text"><b>Consultation Notes:</b><span>{{ consultation["Consultation_Notes"] }}</span></p>
+        <p class="note-text"><b>Conclusion:</b><span>{{ consultation["Conclusion"] }}</span></p>
+        <p class="note-text"><b>Prescription:</b><span>{{ consultation["Prescription"] }}</span></p>
+        <p>
+          <b>Lab Report:</b>
+          {% if consultation["Lab_Report"] %}
+            {% set report_url = url_for('static', filename='lab_reports/' + consultation['Lab_Report']) %}
+            <button
+              class="small-link report-button"
+              type="button"
+              data-report-url="{{ report_url }}"
+              data-report-name="{{ consultation['Lab_Report'] }}"
+            >
+              View Report
+            </button>
+          {% else %}
+            No file uploaded
+          {% endif %}
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="reportModal" aria-hidden="true">
+    <div class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="report-modal-head">
+        <h2 id="reportTitle">Lab Report</h2>
+        <button class="modal-close" type="button" aria-label="Close report">&times;</button>
+      </div>
+      <iframe id="reportFrame" title="Lab report PDF"></iframe>
+      <div class="report-modal-actions">
+        <a class="button-link" id="downloadReport" href="#" download>Download Report</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const reportButton = document.querySelector(".report-button");
+    const reportModal = document.getElementById("reportModal");
+    const reportFrame = document.getElementById("reportFrame");
+    const downloadReport = document.getElementById("downloadReport");
+    const closeReport = document.querySelector(".modal-close");
+
+    function hideReport() {
+      reportModal.classList.remove("is-open");
+      reportModal.setAttribute("aria-hidden", "true");
+      reportFrame.src = "";
+    }
+
+    if (reportButton) {
+      reportButton.addEventListener("click", () => {
+        const reportUrl = reportButton.dataset.reportUrl;
+        reportFrame.src = reportUrl;
+        downloadReport.href = reportUrl;
+        downloadReport.setAttribute("download", reportButton.dataset.reportName || "lab-report.pdf");
+        reportModal.classList.add("is-open");
+        reportModal.setAttribute("aria-hidden", "false");
+      });
+    }
+
+    closeReport.addEventListener("click", hideReport);
+    reportModal.addEventListener("click", (event) => {
+      if (event.target === reportModal) {
+        hideReport();
+      }
+    });
+  </script>
+</body>
+</html>

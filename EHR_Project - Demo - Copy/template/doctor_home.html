@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  {% set header_subtitle = "Doctor login and registration" %}
+  {% set header_subtitle = "Welcome to the electronic health record registration portal" %}
+  <!-- {% include "_header.html" %} -->
+  <header>
+  <div class="site-header-content">
+    <div>
+      <h1>Smart Health Record System</h1>
+      <p>{{ header_subtitle }}</p>
+    </div>
+  </div>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <a class="tab" href="{{ url_for('home') }}">Home</a>
+
+      <a class="tab active" href="{{ url_for('doctor_home') }}">Doctor Login</a>
+    </div>
+
+    {% if message %}
+      <div class="result">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="error-box">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+
+    <section>
+      <div class="section-head">
+        <h2>Doctor Login</h2>
+      </div>
+
+      <form action="{{ url_for('doctor_login') }}" method="post">
+        <label>Doctor Custom ID
+          <input type="text" name="doctor_custom_id" required>
+        </label>
+
+        <label>Mobile Number
+          <input type="text" name="mobile" required>
+        </label>
+
+        <button class="submit" type="submit">Login</button>
+      </form>
+    </section>
+
+    <section class="register-option">
+      <div class="section-head">
+        <h2>New Registration</h2>
+      </div>
+
+      <div class="register-content">
+        <p>If doctor is not registered, create a new doctor account here.</p>
+        <a class="button-link" href="{{ url_for('doctor_form') }}">New Doctor Registration</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
